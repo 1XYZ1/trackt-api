@@ -1,6 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { SupabaseService } from './supabase.service';
+import { AuthGuard } from './auth/auth.guard';
 
 @Controller()
 export class AppController {
@@ -26,5 +27,11 @@ export class AppController {
       return { error: error.message };
     }
     return data;
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('me')
+  getMe(@Req() req: { user: { id: string; email: string } }) {
+    return { id: req.user.id, email: req.user.email };
   }
 }
